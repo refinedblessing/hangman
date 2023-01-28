@@ -33,10 +33,8 @@ class Hangman extends Component {
     if guessed letters are {a,p,e}, show "app_e" for "apple"
   */
   guessedWord() {
-    const { guessed, gameOver, answer } = this.state;
-    return answer
-      .split('')
-      .map((ltr) => (guessed.has(ltr) || gameOver ? ltr : '_'));
+    const { guessed, answer } = this.state;
+    return answer.split('').map((ltr) => (guessed.has(ltr) ? ltr : '_'));
   }
 
   /** handleGuess: handle a guessed letter:
@@ -48,8 +46,8 @@ class Hangman extends Component {
     this.setState((oldState) => {
       const { guessed, nWrong, answer } = oldState;
       const newGuessed = guessed.add(char);
-      // check if all answers have been provided
-      const gameWon = answer.split('').every((char) => guessed.has(char));
+      // check if all chars have been provided
+      const gameWon = this.guessedWord().join('') === answer;
 
       const newNWrong = nWrong + (answer.includes(char) ? 0 : 1);
       const gameOver = newNWrong === this.props.maxWrong;
@@ -80,13 +78,13 @@ class Hangman extends Component {
 
   /** render: render game */
   render() {
-    const { nWrong, gameOver, gameWon } = this.state;
+    const { nWrong, gameOver, gameWon, answer } = this.state;
     return (
       <div className="Hangman">
         <h1>Hangman</h1>
         {!gameOver && !gameWon && (
           <img
-            alt={`${nWrong} wrong guesses`}
+            alt={`${nWrong}/${this.props.maxWrong} wrong guesses`}
             src={this.props.images[nWrong]}
           />
         )}
@@ -98,7 +96,7 @@ class Hangman extends Component {
             Restart
           </button>
         </div>
-        <p className="Hangman-word">{this.guessedWord()}</p>
+        <p className="Hangman-word">{gameOver ? answer : this.guessedWord()}</p>
         {gameOver && !gameWon && (
           <p>
             You Lost!!!{' '}
