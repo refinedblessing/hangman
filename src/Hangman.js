@@ -8,6 +8,7 @@ import img4 from './4.jpg';
 import img5 from './5.jpg';
 import img6 from './6.jpg';
 import { randomWord } from './words';
+import AlphaButtons from './AlphaButtons'
 
 class Hangman extends Component {
   /** by default, allow 6 guesses and use provided gallows images. */
@@ -73,16 +74,8 @@ class Hangman extends Component {
 
   /** generateButtons: return array of letter buttons to render */
   generateButtons() {
-    return 'abcdefghijklmnopqrstuvwxyz'.split('').map((char) => (
-      <button
-        key={char}
-        value={char}
-        onClick={this.handleGuess}
-        disabled={this.state.guessed.has(char)}
-      >
-        {char}
-      </button>
-    ));
+    const chars = 'abcdefghijklmnopqrstuvwxyz';
+    return <AlphaButtons guessed={this.state.guessed} chars={chars} handleGuess={this.handleGuess}/>
   }
 
   /** render: render game */
