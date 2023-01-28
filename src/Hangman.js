@@ -14,12 +14,12 @@ class Hangman extends Component {
   static defaultProps = {
     maxWrong: 6,
     images: [img0, img1, img2, img3, img4, img5, img6],
-    answer: randomWord(),
   };
 
   constructor(props) {
     super(props);
     this.state = {
+      answer: randomWord(),
       gameWon: false,
       gameOver: false,
       nWrong: 0,
@@ -32,8 +32,8 @@ class Hangman extends Component {
     if guessed letters are {a,p,e}, show "app_e" for "apple"
   */
   guessedWord() {
-    const { guessed, gameOver } = this.state;
-    return this.props.answer
+    const { guessed, gameOver, answer } = this.state;
+    return answer
       .split('')
       .map((ltr) => (guessed.has(ltr) || gameOver ? ltr : '_'));
   }
@@ -45,8 +45,7 @@ class Hangman extends Component {
   handleGuess(e) {
     const char = e.target.value;
     this.setState((oldState) => {
-      const { guessed, nWrong } = oldState;
-      const { answer } = this.props;
+      const { guessed, nWrong, answer } = oldState;
       const newGuessed = guessed.add(char);
       // check if all answers have been provided
       const gameWon = answer.split('').every((char) => guessed.has(char));
@@ -61,6 +60,16 @@ class Hangman extends Component {
       };
     });
   }
+
+  handleRestart = () => {
+    this.setState({
+      answer: randomWord(),
+      gameWon: false,
+      gameOver: false,
+      nWrong: 0,
+      guessed: new Set(),
+    });
+  };
 
   /** generateButtons: return array of letter buttons to render */
   generateButtons() {
@@ -88,9 +97,14 @@ class Hangman extends Component {
             src={this.props.images[nWrong]}
           />
         )}
-        <p>
-          You have {nWrong} wrong {nWrong !== 1 ? 'guesses' : 'guess'}
-        </p>
+        <div className='restart-container'>
+          <p>
+            You have {nWrong} wrong {nWrong !== 1 ? 'guesses' : 'guess'}!
+          </p>
+          <button className="restart" onClick={this.handleRestart}>
+            Restart
+          </button>
+        </div>
         <p className="Hangman-word">{this.guessedWord()}</p>
         {gameOver && !gameWon && (
           <p>
